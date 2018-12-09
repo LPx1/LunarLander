@@ -164,6 +164,8 @@ void ofApp::update() {
 		//Environment flipped?
 		altitude = 100 - (selectedPoint.y - rayPoint.y);
 		//printf_s("%f\n", 100 - (selectedPoint.y - rayPoint.y));
+
+		//When landed remove all forces
 		if ((selectedPoint.y - rayPoint.y) > 100) {
 			ofVec3f power = system.particles[0].velocity;
 		//	printf("Velocity: %f \n", power);
@@ -172,16 +174,16 @@ void ofApp::update() {
 			//Remove particle forces when landed
 			gravityForce->set(ofVec3f(0, 0, 0));
 		}
-		if (100 - (selectedPoint.y - rayPoint.y) < 10 && 
-			100 -(selectedPoint.y - rayPoint.y) > 15) {
+		//After a certain altitude remove turbulance
+		else if (100 - (selectedPoint.y - rayPoint.y) < 1 && 
+			100 -(selectedPoint.y - rayPoint.y) > 10) {
+			turbForce1->set(ofVec3f(0, 0, 0), ofVec3f(0, 0, 0));
 
-			//Reset forces after a certain altitude
+		}
+		else {
+			//Reset forces 
 			gravityForce->set(ofVec3f(0, -0.098, 0));
 			turbForce1->set(ofVec3f(-1, -1, -1), ofVec3f(1, 1, 1));
-		}
-		else if (100 - (selectedPoint.y - rayPoint.y) < 20)
-		{
-			turbForce1->set(ofVec3f(0, 0, 0), ofVec3f(0, 0, 0));
 		}
 	}
 	else {
