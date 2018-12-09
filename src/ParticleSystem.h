@@ -29,8 +29,6 @@ public:
 	vector<ParticleForce *> forces;
 };
 
-
-
 // Some convenient built-in forces
 //
 class GravityForce: public ParticleForce {
@@ -102,7 +100,7 @@ public:
 		force = f;
 	}
 	void updateForce(Particle *particle) {
-
+		particle->forces += force;
 	}
 
 	ofVec3f force;

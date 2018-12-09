@@ -9,6 +9,7 @@
 //
 //
 //	Student: Luis Pamintuan
+// 
 //
 
 
@@ -30,15 +31,17 @@ void ofApp::setup(){
 	cam.setFov(65.5);   // approx equivalent to 28mm in 35mm format
 	cam.disableMouseInput();
 
-	topCam.setNearClip(.1);
-	topCam.setFov(65.5);   
-	topCam.setPosition(0, 10, 0);
-	topCam.lookAt(glm::vec3(0, 0, 0));
-
+	//Camera set up to look down to the surface or whats under the lander (F3)
 	botCam.setNearClip(.1);
-	botCam.setFov(65.5);
-	botCam.setPosition(0, 0, -3);
-	botCam.lookAt(glm::vec3(0, 0, 0));
+	botCam.setFov(65.5);   
+	botCam.setPosition(0, -3, 0);
+	botCam.lookAt(glm::vec3(0, -10, 0));
+
+	//Camera set up to look at a side view of the lander (F2)
+	sideCam.setNearClip(.1);
+	sideCam.setFov(65.5);
+	sideCam.setPosition(0, 0, -3);
+	sideCam.lookAt(glm::vec3(0, 0, 0));
 
 	//groundCam.setFov(65.5);
 	//groundCam.setGlobalPosition(0, 0, 0);
@@ -61,12 +64,16 @@ void ofApp::setup(){
 	//
 	initLightingAndMaterials();
 
-	mars.loadModel("geo/moon-crater-v1.obj");
-	mars.setScaleNormalization(false);
-	mars.setRotation(0, 180, 0, 0, 1);
-	mars.setPosition(0, 0, 0);
-
-	boundingBox = meshBounds(mars.getMesh(0));
+	if (mars.loadModel("geo/moon-crater-v1.obj")) {
+		mars.setScaleNormalization(false);
+		mars.setRotation(0, 180, 0, 0, 1);
+		mars.setPosition(0, 0, 0);
+	}
+	else
+	{
+		printf("Error: Unable to load model 'geo/moon-crater-v1.obj' \n");
+		ofExit(0);
+	}
 
 	// load lander model
 	//
@@ -83,17 +90,27 @@ void ofApp::setup(){
 		ofExit(0);
 	}
 
+	//Bounding boxes
+	boundingBox = meshBounds(mars.getMesh(0));
+	landerBox = meshBounds(mars.getMesh(0));
+	oct.create(mars.getMesh(0),6);
+	octShip.create(lander.getMesh(0), 6);
+
+	//Initialize Forces
 	turbForce = new TurbulenceForce(ofVec3f(-20, -20, -20), ofVec3f(20, 20, 20));
-	gravityForce = new GravityForce(ofVec3f(0, -9.8, 0)); //Moon's gravity -1.6
+	gravityForce = new GravityForce(ofVec3f(0, -.098, 0)); //Moon's gravity -1.6
 	radialForce = new ImpulseRadialForce(50.0);
 	thrustForce = new ThrusterForce();
 	turbForce1 = new TurbulenceForce(ofVec3f(-1, -1, -1), ofVec3f(1, 1, 1));
+	impulseForce = new ImpulseForce();
 
 	//Create particle to drive the model and add forces on particle for ship
 	x.lifespan = 10000000000;
 	system.add(x);
 	system.addForce(turbForce1);
 	system.addForce(thrustForce);
+	system.addForce(impulseForce);
+	system.addForce(gravityForce);
 
 
 //	emitter.sys->addForce(turbForce);
@@ -105,22 +122,63 @@ void ofApp::setup(){
 	emitter.setGroupSize(30);
 	emitter.setParticleRadius(.02);
 	emitter.setOneShot(true);
-	emitter.particleColor = ofColor::gray;
-	
+	emitter.particleColor = ofColor::orangeRed;
+
+
 }
 
 
 void ofApp::update() {
 	
-	topCam.setPosition(system.particles[0].position.x,
-		system.particles[0].position.y + 15,
-		system.particles[0].position.z);
+	// Draw ray from Ship to a Point on the surface
+	rayPoint = ofVec3f(botCam.getPosition().x,
+		botCam.getPosition().y - 100,
+		botCam.getPosition().z);
+	rayDir = rayPoint - botCam.getPosition();
+	rayDir.normalize();
+	ray = Ray(Vector3(rayPoint.x, rayPoint.y, rayPoint.z),
+		Vector3(rayDir.x, rayDir.y, rayDir.z));
+
+	TreeNode intersect;
+	oct.intersect(ray, oct.root, intersect);
+	if (intersect.points.size() > 0) {
+		selectedPoint = mars.getMesh(0).getVertex(intersect.points[0]);
+	//	bPointSelected = true;
+		
+		//Environment flipped?
+		printf_s("%f\n", 100 - (selectedPoint.y - rayPoint.y));
+		if ((selectedPoint.y - rayPoint.y) > 100) {
+			ofVec3f power = system.particles[0].velocity;
+		//	printf("Velocity: %f \n", power);
+			impulseForce->apply(-60 * power);
+			
+			//Remove particle forces when landed
+			gravityForce->set(ofVec3f(0, 0, 0));
+			
+		}
+		if ((selectedPoint.y - rayPoint.y) < 100 && 
+			100 -(selectedPoint.y - rayPoint.y) > 105) {
+
+			//Reset forces after a certain altitude
+			gravityForce->set(ofVec3f(0, -0.098, 0));
+			turbForce1->set(ofVec3f(-1, -1, -1), ofVec3f(1, 1, 1));
+		}
+	}
+
+
+	//Updates the positions of cameras following the lander
 
 	botCam.setPosition(system.particles[0].position.x,
+		system.particles[0].position.y ,
+		system.particles[0].position.z);
+
+	sideCam.setPosition(system.particles[0].position.x,
 		system.particles[0].position.y,
 		system.particles[0].position.z - 3);
 
 	cam.setTarget(lander.getPosition());
+
+	//Updates the position of the lander following a particle with forces enacted on it
 
 	lander.setPosition(system.particles[0].position.x,
 		system.particles[0].position.y,
@@ -130,6 +188,10 @@ void ofApp::update() {
 	emitter.setPosition(glm::vec3(system.particles[0].position.x,
 		system.particles[0].position.y,
 		system.particles[0].position.z));
+
+	x.position = ofVec3f(system.particles[0].position.x,
+		system.particles[0].position.y ,
+		system.particles[0].position.z);
 
 	emitter.update();
 	system.update();
@@ -205,7 +267,11 @@ void ofApp::draw() {
 	emitter.draw();
 //	system.draw();
 //	x.draw();
-	oct.draw(oct.root, 7, 1, 0);
+	oct.draw(oct.root, 3, 1, 0);
+//	octShip.draw(octShip.root, 3, 1, 0);
+	x.draw();
+	ofDrawLine(rayPoint, rayDir);
+	
 	ofPopMatrix();
 	theCam->end();
 
@@ -278,6 +344,15 @@ void ofApp::keyPressed(int key) {
 		break;
 	case 'V':
 		break;
+	case 'A':
+	case 'a':
+	{
+		ofVec3f power = system.particles[0].velocity;
+		printf("Velocity: %f \n", power);
+		impulseForce->apply(-60 * power);
+//		thrustForce->up = true;
+		break;
+	}
 	case 'w':
 		toggleWireframeMode();
 		break;
@@ -285,10 +360,10 @@ void ofApp::keyPressed(int key) {
 		theCam = &cam;
 		break;
 	case OF_KEY_F2:
-		theCam = &botCam;
+		theCam = &sideCam;
 		break;
 	case OF_KEY_F3:
-		theCam = &topCam;
+		theCam = &botCam;
 		break;
 	case OF_KEY_ALT:
 		cam.enableMouseInput();
@@ -356,9 +431,11 @@ void ofApp::keyReleased(int key) {
 	case OF_KEY_LEFT:
 		thrustForce->left = false;
 		thrustForce->clear();
+		break;
 	case OF_KEY_RIGHT:
 		thrustForce->right = false;
 		thrustForce->clear();
+		break;
 	case OF_KEY_ALT:
 		cam.disableMouseInput();
 		bAltKeyDown = false;
@@ -370,6 +447,12 @@ void ofApp::keyReleased(int key) {
 		forwardDir = false;
 		backDir = false;
 		break;
+	//case 'A':
+	//case 'a':
+	//{
+	//	thrustForce->up = false;
+	//	break;
+	//}
 	default:
 		break;
 

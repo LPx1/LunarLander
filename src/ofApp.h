@@ -63,6 +63,7 @@ class ofApp : public ofBaseApp{
 		ofVec3f selectedPoint;
 		ofVec3f intersectPoint;
 		Octree oct;
+		Octree octShip;
 
 
 		const float selectionRange = 4.0;
@@ -74,11 +75,13 @@ class ofApp : public ofBaseApp{
 		ofxAssimpModelLoader lander, mars; // Mars == Moon for the sake of consistency
 		ofLight light;
 		Box boundingBox;
+		Box landerBox;
 		vector<Box> level1, level2, level3;
 		ofImage backgroundImage;
 		ofCamera *theCam = NULL;
-		ofCamera topCam;
-		ofCamera botCam; 
+//		ofCamera topCam;
+		ofCamera sideCam;
+		ofCamera botCam;
 
 
 		//Forces
@@ -87,11 +90,12 @@ class ofApp : public ofBaseApp{
 		ImpulseRadialForce *radialForce;
 		TurbulenceForce *turbForce1;
 		ThrusterForce *thrustForce;
+		ImpulseForce *impulseForce;
 
 		ParticleEmitter emitter;
 		ParticleSystem system;
 		Particle x;
-
+		
 
 		//Exists in Terrain ofApp.h
 		//bool bAltKeyDown;
@@ -103,6 +107,12 @@ class ofApp : public ofBaseApp{
 		bool bLanderLoaded = false;
 		bool forwardDir = false;
 		bool backDir = false;
+
+		//Octree oct;
+		ofVec3f rayPoint;
+		ofVec3f rayDir;
+		Ray ray;
+		
 	
 
 };

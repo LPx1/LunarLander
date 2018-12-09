@@ -1,5 +1,6 @@
 ﻿  ofApp.cpp
-c:\users\asian\desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myapps\moonlander\src\ofapp.cpp(521): warning C4018: '<': signed/unsigned mismatch
+c:\users\asian\desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myapps\moonlander\src\ofapp.cpp(334): warning C4477: 'printf' : format string '%f' requires an argument of type 'double', but variadic argument 1 has type 'ofVec3f'
+c:\users\asian\desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myapps\moonlander\src\ofapp.cpp(587): warning C4018: '<': signed/unsigned mismatch
   MoonLander.vcxproj -> C:\Users\asian\Desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myApps\MoonLander\bin\MoonLander_debug.exe
   
   	                   2	C:\Users\asian\Desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\libs\fmodex\lib\vs\Win32\

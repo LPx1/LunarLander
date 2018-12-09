@@ -1,0 +1,21 @@
+﻿  ofApp.cpp
+c:\users\asian\desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myapps\moonlander\src\ofapp.cpp(352): warning C4477: 'printf' : format string '%f' requires an argument of type 'double', but variadic argument 1 has type 'ofVec3f'
+c:\users\asian\desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myapps\moonlander\src\ofapp.cpp(605): warning C4018: '<': signed/unsigned mismatch
+     Creating library bin\MoonLander.lib and object bin\MoonLander.exp
+  Generating code
+  0 of 621 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  MoonLander.vcxproj -> C:\Users\asian\Desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myApps\MoonLander\bin\MoonLander.exe
+  
+  	                   2	C:\Users\asian\Desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\libs\fmodex\lib\vs\Win32\
+  	  *EXTRA File 		 3523584	C:\Users\asian\Desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myApps\MoonLander\bin\assimp32.dll
+  	  *EXTRA File 		 4323840	C:\Users\asian\Desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myApps\MoonLander\bin\assimp64.dll
+  	  *EXTRA File 		 5647872	C:\Users\asian\Desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myApps\MoonLander\bin\FreeImage.dll
+  
+  	                   1	C:\Users\asian\Desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\libs\FreeImage\lib\vs\Win32\
+  	  *EXTRA File 		 3523584	C:\Users\asian\Desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myApps\MoonLander\bin\assimp32.dll
+  	  *EXTRA File 		 4323840	C:\Users\asian\Desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myApps\MoonLander\bin\assimp64.dll
+  	  *EXTRA File 		 1266176	C:\Users\asian\Desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myApps\MoonLander\bin\fmodex.dll
+  	  *EXTRA File 		 1312768	C:\Users\asian\Desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myApps\MoonLander\bin\fmodexL.dll
