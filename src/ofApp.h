@@ -62,6 +62,7 @@ class ofApp : public ofBaseApp{
 
 		ofVec3f selectedPoint;
 		ofVec3f intersectPoint;
+		float altitude;
 		Octree oct;
 		Octree octShip;
 
@@ -71,7 +72,7 @@ class ofApp : public ofBaseApp{
 		/*-----------------------------------------------------------------------------*/
 
 		ofEasyCam cam;
-		ofEasyCam groundCam;
+		ofEasyCam landerCam;
 		ofxAssimpModelLoader lander, mars; // Mars == Moon for the sake of consistency
 		ofLight light;
 		Box boundingBox;
@@ -82,6 +83,8 @@ class ofApp : public ofBaseApp{
 //		ofCamera topCam;
 		ofCamera sideCam;
 		ofCamera botCam;
+
+		ofLight sunLight;
 
 
 		//Forces
@@ -112,6 +115,9 @@ class ofApp : public ofBaseApp{
 		ofVec3f rayPoint;
 		ofVec3f rayDir;
 		Ray ray;
+
+		//Sound Effects
+		ofSoundPlayer thruster;
 		
 	
 

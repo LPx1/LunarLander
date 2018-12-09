@@ -31,6 +31,11 @@ void ofApp::setup(){
 	cam.setFov(65.5);   // approx equivalent to 28mm in 35mm format
 	cam.disableMouseInput();
 
+	landerCam.setDistance(10);
+	landerCam.setNearClip(.1);
+	landerCam.setFov(65.5);
+	
+
 	//Camera set up to look down to the surface or whats under the lander (F3)
 	botCam.setNearClip(.1);
 	botCam.setFov(65.5);   
@@ -43,11 +48,15 @@ void ofApp::setup(){
 	sideCam.setPosition(0, 0, -3);
 	sideCam.lookAt(glm::vec3(0, 0, 0));
 
-	//groundCam.setFov(65.5);
-	//groundCam.setGlobalPosition(0, 0, 0);
+	sunLight.setup();
+	sunLight.enable();
+	sunLight.setAreaLight(2, 2);
+	sunLight.setAmbientColor(ofFloatColor(10, 10, 10));
+//	sunLight.setDiffuseColor(ofFloatColor(100, 100, 100));
+//	sunLight.setSpecularColor(ofFloatColor(100, 100, 00));
+//	sunLight.set
 
 	// set current camera;
-	//
 	theCam = &cam;
 	
 	ofSetVerticalSync(true);
@@ -58,6 +67,14 @@ void ofApp::setup(){
 	//
 	bBackgroundLoaded = backgroundImage.load("images/starfield-plain.jpg");
 
+	// Load sound
+	
+	if (thruster.load("sounds/atmosphere3.mp3")) {
+
+	}
+	else {
+		printf("Error: Unable to load  'atmosphere3.mp3' \n");
+	}
 
 	// load moon terrain
 	// setup rudimentary lighting 
@@ -124,7 +141,6 @@ void ofApp::setup(){
 	emitter.setOneShot(true);
 	emitter.particleColor = ofColor::orangeRed;
 
-
 }
 
 
@@ -146,7 +162,8 @@ void ofApp::update() {
 	//	bPointSelected = true;
 		
 		//Environment flipped?
-		printf_s("%f\n", 100 - (selectedPoint.y - rayPoint.y));
+		altitude = 100 - (selectedPoint.y - rayPoint.y);
+		//printf_s("%f\n", 100 - (selectedPoint.y - rayPoint.y));
 		if ((selectedPoint.y - rayPoint.y) > 100) {
 			ofVec3f power = system.particles[0].velocity;
 		//	printf("Velocity: %f \n", power);
@@ -154,15 +171,22 @@ void ofApp::update() {
 			
 			//Remove particle forces when landed
 			gravityForce->set(ofVec3f(0, 0, 0));
-			
 		}
-		if ((selectedPoint.y - rayPoint.y) < 100 && 
-			100 -(selectedPoint.y - rayPoint.y) > 105) {
+		if (100 - (selectedPoint.y - rayPoint.y) < 10 && 
+			100 -(selectedPoint.y - rayPoint.y) > 15) {
 
 			//Reset forces after a certain altitude
 			gravityForce->set(ofVec3f(0, -0.098, 0));
 			turbForce1->set(ofVec3f(-1, -1, -1), ofVec3f(1, 1, 1));
 		}
+		else if (100 - (selectedPoint.y - rayPoint.y) < 20)
+		{
+			turbForce1->set(ofVec3f(0, 0, 0), ofVec3f(0, 0, 0));
+		}
+	}
+	else {
+		//When lander is off map 
+		altitude = 0;
 	}
 
 
@@ -175,6 +199,13 @@ void ofApp::update() {
 	sideCam.setPosition(system.particles[0].position.x,
 		system.particles[0].position.y,
 		system.particles[0].position.z - 3);
+
+//	ofVec3f place = lander.getPosition();
+
+	landerCam.setPosition(lander.getPosition().x,
+		lander.getPosition().y + 3,
+		lander.getPosition().z + 5);
+	landerCam.setTarget(lander.getPosition());
 
 	cam.setTarget(lander.getPosition());
 
@@ -266,11 +297,11 @@ void ofApp::draw() {
 
 	emitter.draw();
 //	system.draw();
-//	x.draw();
+
 	oct.draw(oct.root, 3, 1, 0);
-//	octShip.draw(octShip.root, 3, 1, 0);
-	x.draw();
-	ofDrawLine(rayPoint, rayDir);
+
+//	x.draw();
+//	ofDrawLine(rayPoint, rayDir);
 	
 	ofPopMatrix();
 	theCam->end();
@@ -281,6 +312,11 @@ void ofApp::draw() {
 	str += "Frame Rate: " + std::to_string(ofGetFrameRate());
 	ofSetColor(ofColor::white);
 	ofDrawBitmapString(str, ofGetWindowWidth() - 170, 15);
+
+	string alt;
+	alt += "Altitude (AGL): " + std::to_string(altitude);
+	ofSetColor(ofColor::white);
+	ofDrawBitmapString(alt, ofGetWindowWidth() - 170, 30);
 
 }
 
@@ -344,15 +380,15 @@ void ofApp::keyPressed(int key) {
 		break;
 	case 'V':
 		break;
-	case 'A':
-	case 'a':
-	{
-		ofVec3f power = system.particles[0].velocity;
-		printf("Velocity: %f \n", power);
-		impulseForce->apply(-60 * power);
-//		thrustForce->up = true;
-		break;
-	}
+//	case 'A':
+//	case 'a':
+//	{
+//		ofVec3f power = system.particles[0].velocity;
+//		printf("Velocity: %f \n", power);
+//		impulseForce->apply(-60 * power);
+////		thrustForce->up = true;
+//		break;
+//	}
 	case 'w':
 		toggleWireframeMode();
 		break;
@@ -364,6 +400,9 @@ void ofApp::keyPressed(int key) {
 		break;
 	case OF_KEY_F3:
 		theCam = &botCam;
+		break;
+	case OF_KEY_F4:
+		theCam = &landerCam;
 		break;
 	case OF_KEY_ALT:
 		cam.enableMouseInput();
@@ -385,6 +424,15 @@ void ofApp::keyPressed(int key) {
 			thrustForce->up = true;
 			emitter.sys->reset();
 			emitter.start();
+			if (thrustForce->up == true) {
+				thruster.setLoop(true);
+				if (thruster.getIsPlaying()) {
+
+				}
+				else {
+					thruster.play();
+				}
+			}
 		}
 
 		break;
@@ -421,6 +469,8 @@ void ofApp::keyReleased(int key) {
 	case OF_KEY_UP:
 		thrustForce->up = false;
 		thrustForce->back= false;
+		thruster.setLoop(false);
+		thruster.stop();
 		thrustForce->clear();
 		break;
 	case OF_KEY_DOWN:
