@@ -116,7 +116,7 @@ void ofApp::setup(){
 	//Initialize Forces
 	turbForce = new TurbulenceForce(ofVec3f(-20, -20, -20), ofVec3f(20, 20, 20));
 	gravityForce = new GravityForce(ofVec3f(0, -.098, 0)); //Moon's gravity -1.6
-	radialForce = new ImpulseRadialForce(50.0);
+	radialForce = new ImpulseRadialForce(20.0);
 	thrustForce = new ThrusterForce();
 	turbForce1 = new TurbulenceForce(ofVec3f(-1, -1, -1), ofVec3f(1, 1, 1));
 	impulseForce = new ImpulseForce();
@@ -136,7 +136,7 @@ void ofApp::setup(){
 //	emitter.sys->addForce(thrustForce);
 	emitter.setVelocity(lander.getPosition());
 	emitter.setEmitterType(DiscEmitter);
-	emitter.setGroupSize(30);
+	emitter.setGroupSize(100);
 	emitter.setParticleRadius(.02);
 	emitter.setOneShot(true);
 	emitter.particleColor = ofColor::orangeRed;
