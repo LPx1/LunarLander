@@ -1,5 +1,7 @@
 //  Kevin M. Smith - Basic Octree Class - CS134/235 4/18/18
 //
+// Student: Luis Pamintuan
+//
 
 
 #include "Octree.h"

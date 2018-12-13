@@ -142,7 +142,7 @@ void ofApp::setup(){
 	octShip.create(lander.getMesh(0), 6);
 
 	//Initialize Forces
-	turbForce = new TurbulenceForce(ofVec3f(-20, -20, -20), ofVec3f(20, 20, 20));
+	turbForce = new TurbulenceForce(ofVec3f(-10, -10, -10), ofVec3f(10, 10, 10));
 	gravityForce = new GravityForce(ofVec3f(0, -.098, 0)); //Moon's gravity -1.6
 	radialForce = new ImpulseRadialForce(20.0);
 	thrustForce = new ThrusterForce();
@@ -216,7 +216,7 @@ void ofApp::update() {
 		if ((selectedPoint.y - rayPoint.y) > 100) {
 			ofVec3f power = system.particles[0].velocity;
 		//	printf("Velocity: %f \n", power);
-			impulseForce->apply(-60 * power);
+			impulseForce->apply(-ofGetFrameRate() * power);
 			
 			//Remove particle forces when landed
 			gravityForce->set(ofVec3f(0, 0, 0));

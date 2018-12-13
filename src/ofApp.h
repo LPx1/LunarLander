@@ -5,6 +5,9 @@
 //   This file contains all the necessary startup code for the Midterm problem Part II
 //   Please make sure to you the required data files installed in your $OF/data directory.
 //
+//	Student: Luis Pamintuan
+//
+//
 //                                             (c) Kevin M. Smith  - 2018
 #pragma once
 
