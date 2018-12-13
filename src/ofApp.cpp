@@ -20,6 +20,8 @@
 //
 void ofApp::setup(){
 
+	ofDisableArbTex();
+
 	bWireframe = false;
 	bDisplayPoints = false;
 	bAltKeyDown = false;
@@ -35,6 +37,13 @@ void ofApp::setup(){
 	landerCam.setNearClip(.1);
 	landerCam.setFov(65.5);
 	
+	farCam.setPosition(ofVec3f(80, -20, -50));
+	farCam.lookAt(ofVec3f(-70, 0, 50));
+
+	groundCam.setPosition(ofVec3f(10, -30, -50));
+	groundCam.lookAt(ofVec3f(10, -40, 0));
+	groundCam.setNearClip(.1);
+
 
 	//Camera set up to look down to the surface or whats under the lander (F3)
 	botCam.setNearClip(.1);
@@ -63,6 +72,22 @@ void ofApp::setup(){
 	ofEnableSmoothing();
 	ofEnableDepthTest();
 
+	//load textures
+	//
+	if (!ofLoadImage(particleTex, "images/dot.png")) {
+		cout << "Particle Texture File: images/dot.png not found" << endl;
+		ofExit();
+	}
+
+	// load the shader
+//
+#ifdef TARGET_OPENGLES
+	shader.load("shaders_gles/shader");
+#else
+	shader.load("shaders/shader");
+#endif
+
+
 	// load BG image
 	//
 	bBackgroundLoaded = backgroundImage.load("images/starfield-plain.jpg");
@@ -80,6 +105,9 @@ void ofApp::setup(){
 	// setup rudimentary lighting 
 	//
 	initLightingAndMaterials();
+
+	// 	The maximum number of stack frames supported by Visual Studio has been exceeded.
+	// (mars.loadModel("geo/moon-houdini.obj"))
 
 	if (mars.loadModel("geo/moon-crater-v1.obj")) {
 		mars.setScaleNormalization(false);
@@ -139,8 +167,27 @@ void ofApp::setup(){
 	emitter.setGroupSize(100);
 	emitter.setParticleRadius(.02);
 	emitter.setOneShot(true);
-	emitter.particleColor = ofColor::orangeRed;
+	emitter.particleColor = ofColor::red;
 
+}
+
+// load vertex buffer in preparation for rendering
+//
+void ofApp::loadVbo() {
+	if (emitter.sys->particles.size() < 1) return;
+
+	vector<ofVec3f> sizes;
+	vector<ofVec3f> points;
+	for (int i = 0; i < emitter.sys->particles.size(); i++) {
+		points.push_back(emitter.sys->particles[i].position);
+		//sizes.push_back(ofVec3f(radius));
+	}
+	// upload the data to the vbo
+	//
+	int total = (int)points.size();
+	vbo.clear();
+	vbo.setVertexData(&points[0], total, GL_STATIC_DRAW);
+	vbo.setNormalData(&sizes[0], total, GL_STATIC_DRAW);
 }
 
 
@@ -194,6 +241,9 @@ void ofApp::update() {
 
 	//Updates the positions of cameras following the lander
 
+	ofVec3f place = lander.getPosition();
+	groundCam.lookAt(ofVec3f(place.x, -50 -(place.y),place.z));
+
 	botCam.setPosition(system.particles[0].position.x,
 		system.particles[0].position.y ,
 		system.particles[0].position.z);
@@ -202,14 +252,17 @@ void ofApp::update() {
 		system.particles[0].position.y,
 		system.particles[0].position.z - 3);
 
-//	ofVec3f place = lander.getPosition();
+
 
 	landerCam.setPosition(lander.getPosition().x,
 		lander.getPosition().y + 3,
 		lander.getPosition().z + 5);
 	landerCam.setTarget(lander.getPosition());
 
-	cam.setTarget(lander.getPosition());
+
+	//Plane is flipped 
+	cam.setTarget(ofVec3f(place.x, (place.y), place.z));
+	
 
 	//Updates the position of the lander following a particle with forces enacted on it
 
@@ -232,6 +285,7 @@ void ofApp::update() {
 
 //--------------------------------------------------------------
 void ofApp::draw() {
+	loadVbo();
 
 	//	ofBackgroundGradient(ofColor(20), ofColor(0));   // pick your own backgroujnd
 	//	ofBackground(ofColor::black);
@@ -245,6 +299,15 @@ void ofApp::draw() {
 		ofPopMatrix();
 	}
 
+	ofSetColor(255, 100, 90);
+//	ofSetColor(ofColor::red);
+
+	// this makes everything look glowy :)
+	//
+	ofEnableBlendMode(OF_BLENDMODE_ADD);
+	ofEnablePointSprites();
+
+//	shader.begin();
 	theCam->begin();
 	ofPushMatrix();
 	if (bWireframe) {                    // wireframe mode  (include axis)
@@ -297,16 +360,25 @@ void ofApp::draw() {
 	
 	ofPopMatrix();
 
-	emitter.draw();
+//	emitter.draw();
+
+	particleTex.bind();
+	vbo.draw(GL_POINTS, 0, (int)emitter.sys->particles.size());
+	particleTex.unbind();
 //	system.draw();
 
-	oct.draw(oct.root, 3, 1, 0);
+//	oct.draw(oct.root, 3, 1, 0);
 
 //	x.draw();
 //	ofDrawLine(rayPoint, rayDir);
 	
 	ofPopMatrix();
 	theCam->end();
+//	shader.end();
+
+	ofDisablePointSprites();
+	ofDisableBlendMode();
+	ofEnableAlphaBlending();
 
 	// draw screen data
 	//
@@ -318,7 +390,7 @@ void ofApp::draw() {
 	string alt;
 	alt += "Altitude (AGL): " + std::to_string(altitude);
 	ofSetColor(ofColor::white);
-	ofDrawBitmapString(alt, ofGetWindowWidth() - 170, 30);
+	ofDrawBitmapString(alt, ofGetWindowWidth() - 200, 30);
 
 }
 
@@ -366,13 +438,23 @@ void ofApp::keyPressed(int key) {
 		break;
 	case 'P':
 	case 'p':
-		break;
+		{
+		ofVec3f pos = ofVec3f(lander.getPosition().x + 2,
+		lander.getPosition().y + 2,
+		lander.getPosition().z);
+		cam.setPosition(pos);
+		cam.lookAt(ofVec3f(pos.x - 2, pos.y - 2, pos.z));
+		break; }
+		
 	case 'r':
 		cam.reset();
 		break;
 	case 's':
 		savePicture();
 		break;
+	case 'D':
+	case 'd':
+
 	case 't':
 		break;
 	case 'u':
@@ -405,6 +487,12 @@ void ofApp::keyPressed(int key) {
 		break;
 	case OF_KEY_F4:
 		theCam = &landerCam;
+		break;
+	case OF_KEY_F5:
+		theCam = &farCam;
+		break;
+	case OF_KEY_F6:
+		theCam = &groundCam;
 		break;
 	case OF_KEY_ALT:
 		cam.enableMouseInput();

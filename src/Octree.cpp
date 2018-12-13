@@ -133,6 +133,7 @@ void Octree::create(const ofMesh & geo, int numLevels) {
 
 void Octree::subdivide(const ofMesh & mesh, TreeNode & node, int numLevels, int level) {
 	vector<Box> bList(8);
+//	int size = node.points.size();
 	vector<int> intList = node.points;
 	subDivideBox8(node.box, bList);
 

@@ -40,6 +40,7 @@ class ofApp : public ofBaseApp{
 		void savePicture();
 		void toggleWireframeMode();
 		void togglePointsDisplay();
+		void loadVbo();
 
 
 		/*-----------------------------------------------------------------------------*/
@@ -83,6 +84,8 @@ class ofApp : public ofBaseApp{
 //		ofCamera topCam;
 		ofCamera sideCam;
 		ofCamera botCam;
+		ofCamera farCam;
+		ofCamera groundCam;
 
 		ofLight sunLight;
 
@@ -119,6 +122,9 @@ class ofApp : public ofBaseApp{
 		//Sound Effects
 		ofSoundPlayer thruster;
 		
-	
+		//Textures and Shaders
+		ofVbo vbo;
+		ofShader shader;
+		ofTexture particleTex;
 
 };

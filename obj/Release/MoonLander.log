@@ -1,7 +1,8 @@
 ﻿  ofApp.cpp
-c:\users\asian\desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myapps\moonlander\src\ofapp.cpp(431): warning C4996: 'ofSoundPlayer::getIsPlaying': Use isPlaying
+c:\users\asian\desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myapps\moonlander\src\ofapp.cpp(181): warning C4018: '<': signed/unsigned mismatch
+c:\users\asian\desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myapps\moonlander\src\ofapp.cpp(519): warning C4996: 'ofSoundPlayer::getIsPlaying': Use isPlaying
   c:\users\asian\desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\libs\openframeworks\sound\ofsoundplayer.h(141): note: see declaration of 'ofSoundPlayer::getIsPlaying'
-c:\users\asian\desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myapps\moonlander\src\ofapp.cpp(656): warning C4018: '<': signed/unsigned mismatch
+c:\users\asian\desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myapps\moonlander\src\ofapp.cpp(744): warning C4018: '<': signed/unsigned mismatch
      Creating library bin\MoonLander.lib and object bin\MoonLander.exp
   Generating code
   0 of 621 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
@@ -13,10 +14,14 @@ c:\users\asian\desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\
   	                   2	C:\Users\asian\Desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\libs\fmodex\lib\vs\Win32\
   	  *EXTRA File 		 3523584	C:\Users\asian\Desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myApps\MoonLander\bin\assimp32.dll
   	  *EXTRA File 		 4323840	C:\Users\asian\Desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myApps\MoonLander\bin\assimp64.dll
+  	  *EXTRA File 		 1503232	C:\Users\asian\Desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myApps\MoonLander\bin\fmodex64.dll
+  	  *EXTRA File 		 1552384	C:\Users\asian\Desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myApps\MoonLander\bin\fmodexL64.dll
   	  *EXTRA File 		 5647872	C:\Users\asian\Desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myApps\MoonLander\bin\FreeImage.dll
   
   	                   1	C:\Users\asian\Desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\libs\FreeImage\lib\vs\Win32\
   	  *EXTRA File 		 3523584	C:\Users\asian\Desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myApps\MoonLander\bin\assimp32.dll
   	  *EXTRA File 		 4323840	C:\Users\asian\Desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myApps\MoonLander\bin\assimp64.dll
   	  *EXTRA File 		 1266176	C:\Users\asian\Desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myApps\MoonLander\bin\fmodex.dll
+  	  *EXTRA File 		 1503232	C:\Users\asian\Desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myApps\MoonLander\bin\fmodex64.dll
   	  *EXTRA File 		 1312768	C:\Users\asian\Desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myApps\MoonLander\bin\fmodexL.dll
+  	  *EXTRA File 		 1552384	C:\Users\asian\Desktop\of_v0.10.0_vs2017_release\of_v0.10.0_vs2017_release\apps\myApps\MoonLander\bin\fmodexL64.dll
