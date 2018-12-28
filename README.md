@@ -7,3 +7,7 @@ To do this, I casted rays down to the surface of the terrain and using an octree
 In addition to forces being enacted onto the lander such as gravity pulling the lander down to the surface on the terrain. The turbulence force generating random values of where it will pull the lander. Lastly, thruster force will push the lander whether it be forward, back, up, down, left or right through using the arrow keys for direction. 
 
 Also implemented are multiple cameras ranging from cameras following the lander or cameras placed looking at a general direction.
+
+Video Demonstrating the features of the project:
+
+https://www.youtube.com/watch?v=es8I6xOLN9M
