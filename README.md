@@ -1,6 +1,6 @@
 # LunarLander
 
-The objective of this project was to implement forces on our lander such as gravity, thruster, and turbulence to simulate a landing of our lunar lander onto our terrain. 
+The object of this project was to implement force on our lander as well as calculate collision detection so that the lander may land on the surface of the terrain. Creating such forces such as thrust force, gravitational force and turbulence. 
 
 ![](https://github.com/LPx1/MoonLander/blob/master/lunarlander.png)
 
