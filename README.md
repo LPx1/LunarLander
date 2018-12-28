@@ -1,4 +1,4 @@
-# MoonLander
+# LunarLander
 
 The objective of this project was to implement forces on our lander such as gravity, thruster, and turbulence to simulate a landing of our lunar lander onto our terrain. 
 
